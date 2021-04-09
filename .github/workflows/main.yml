@@ -1,8 +1,6 @@
 name: Java CI
 
 on: [push]
-schedule:
-    - cron: '*/60 * * * *'
 
 jobs:
   build:
@@ -27,8 +25,8 @@ jobs:
     - name: Run a compiler server
       run: docker pull prendota/kotlin-compiler-server
 
-    - name: Execution of snippets
-      working-directory: kotlin-compiler-server/src/test/resources/test-compile-data/jvm/KotlinWebSiteSnippetsTests/
-      run: (как передать файлы на исполнение серверу?)
+    #- name: Execution of snippets
+    # working-directory: kotlin-compiler-server/src/test/resources/test-compile-data/jvm/KotlinWebSiteSnippetsTests/
+    #  run: (как передать файлы на исполнение серверу?)
 
 
