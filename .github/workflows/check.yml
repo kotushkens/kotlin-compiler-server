@@ -4,9 +4,10 @@ name: CI
 
 # This part controls when the workflow will run.
 on: 
-  schedule:
+[push]
+  #schedule:
   # Here you can set any schedule of workflow execution
-    -cron: '0 6 * * *'
+   # -cron: '0 6 * * *'
 
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
