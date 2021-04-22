@@ -12,7 +12,6 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  
   schedule-check:
     name: Verifier run
     runs-on: ubuntu-latest
@@ -52,6 +51,6 @@ jobs:
      
       - name: Run verifier
         working-directory: ./verifier
-        run: ./client/build/install/client/bin/client -in snippets -r https://github.com/vmishenev/kotlin-compiler-server -username ${{ secrets.TOKEN }} -path src/test/resources/test-compile-data/kotlin-web-site
+        run: ./client/build/install/client/bin/client check -r https://github.com/kotushkens/kotlin-compiler-server -username ${{ secrets.TOKEN }} -path src/test/resources/test-compile-data/kotlin-web-site
       
 
