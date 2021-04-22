@@ -4,16 +4,15 @@ name: CI
 
 # This part controls when the workflow will run.
 on: 
-[push]
-  #schedule:
-  # Here you can set any schedule of workflow execution
-   # -cron: '0 6 * * *'
+    push:
+    schedule:
+    # Here you can set any schedule of workflow execution
+        - cron: "0 6 * * *"
 
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  schedule-check:
-    name: Verifier run
+    schedule-check:
     runs-on: ubuntu-latest
 
     steps:
@@ -51,6 +50,4 @@ jobs:
      
       - name: Run verifier
         working-directory: ./verifier
-        run: ./client/build/install/client/bin/client check -r https://github.com/kotushkens/kotlin-compiler-server -username ${{ secrets.TOKEN }} -path src/test/resources/test-compile-data/kotlin-web-site
-      
-
+        run: ./client/build/install/client/bin/client check -r https://github.com/kotushkens/kotlin-compiler-server -f run-kotlin -path src/test/resources/test-compile-data/kotlin-web-site
