@@ -4,20 +4,17 @@ name: CI
 
 # This part controls when the workflow will run.
 on: 
-[push]
-  #schedule:
-  # Here you can set any schedule of workflow execution
-   # -cron: '0 6 * * *'
+  schedule:
+    # Here you can set any schedule of workflow execution
+    - cron: "0 6 * * *"
 
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   schedule-check:
-    name: Verifier run
     runs-on: ubuntu-latest
 
     steps:
-     
       - name: Checkout verifier
       - uses: actions/checkout@v2
         with:
@@ -32,7 +29,6 @@ jobs:
         
       - name: Grant execute permission for gradlew
         run: chmod +x ./verifier/gradlew
-     
       - name: Build with Gradle
         working-directory: ./verifier
         run: |
@@ -42,9 +38,40 @@ jobs:
       - name: Run a docker with compiler-server
         working-directory: ./verifier
         run: ./gradlew dockerRun
-     
-      - name: Run verifier
+      - name: Run verifier in Kotlin web site
         working-directory: ./verifier
-        run: ./client/build/install/client/bin/client check -r https://github.com/kotushkens/kotlin-compiler-server -username ${{ secrets.TOKEN }} -path src/test/resources/test-compile-data/kotlin-web-site
-      
+        run: ./client/build/install/client/bin/client collect -r https://github.com/JetBrains/kotlin-web-site -file-type HTML -f run-kotlin -commits ${{ github.event.before }},${{ github.event.after }} -out snippets
 
+      - name: 'Upload Artifact'
+        uses: actions/upload-artifact@v2
+        with:
+          name: extracted-snippets
+          path: ./verifier/snippets
+          retention-days: 5
+      
+      - name: Checkout pusher
+        uses: actions/checkout@v2
+        with:
+          repository: vmishenev/kotlin-samples-pusher
+          path: pusher
+          
+      - name: Move a file
+        run: mv ./verifier/snippets ./pusher/snippets
+        
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./pusher/gradlew
+        
+      - name: Build with Gradle
+        working-directory: ./pusher
+        run: |
+             ./gradlew build -x test
+             ./gradlew installDist
+      - name: Run pusher
+        working-directory: ./pusher
+        run: ./build/install/kotlin-samples-pusher/bin/kotlin-samples-pusher -in snippets -r https://github.com/kotushkens/kotlin-compiler-server -username ${{ secrets.TOKEN }} -path src/test/resources/test-compile-data/kotlin-web-site
+        
+      # Runs a set of commands using the runners shell
+      - name: Run a multi-line script
+        run: |
+          echo Add other actions to build,
+          echo test, and deploy your project.
